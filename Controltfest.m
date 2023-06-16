@@ -1,6 +1,21 @@
+%% Import Dataset and Filter Out Samples with Missing Values
 
 M = readmatrix('D:\Usman Daudu\Documents\Engr Micheal\water_potability');
 N = rmmissing(M);
+
+%% Split Dataset into Training and Validation Sets
+
+training_size = 0.75;
+rng(123)
+shuffle = randperm(size(N,1));
+
+train = N(shuffle(1:floor(training_size*length(N))),:);
+train(:,1:end-1) = normalize(train(:,1:end-1));
+
+val = N(shuffle(ceil(training_size*length(N)):end),:);
+val(:,1:end-1) = normalize(val(:,1:end-1));
+
+%% Search for Best Pole and Zeros to Estimate Transfer Function
 
 filename = "ControlFit.txt";
 
@@ -11,7 +26,7 @@ bestFPE = -1;
 bestMSE = -1;
 
 startpole = 1;
-endpole = 5;
+endpole = 15;
 
 fid = fopen(filename,"w");
 if fid ~= -1
@@ -21,7 +36,7 @@ if fid ~= -1
     fprintf(fid,"Pole  Fit    FPE     MSE  \n");
 
     for i = startpole:endpole
-        sys = tfest(N(:,1:end-1),N(:,end),i);
+        sys = tfest(train(:,1:end-1),train(:,end),i);
 
         if sys.Report.Fit.FitPercent > bestfit
             bestpole = i;
@@ -49,7 +64,7 @@ if fid ~= -1
     fprintf(fid,"Pole Zero  Fit    FPE     MSE  \n");
 
     for j = 0:bestpole
-        sys = tfest(N(:,5:end-1),N(:,end),bestpole,j);
+        sys = tfest(train(:,1:end-1),train(:,end),bestpole,j);
 
         if sys.Report.Fit.FitPercent >= bestfit
             bestzero = j;
@@ -80,3 +95,10 @@ if fid ~= -1
 
     fopen(filename);
 end
+
+%% Model Validation
+
+BestSys = tfest(train(:,1:end-1),train(:,end),bestpole,bestzero);
+
+figure();
+compare(val(:,1:end-1),val(:,end),BestSys)
