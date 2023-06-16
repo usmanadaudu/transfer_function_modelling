@@ -1,7 +1,8 @@
-
+%% Import Dataset and Remove samples with missing values
 M = readmatrix('D:\Usman Daudu\Documents\Engr Micheal\water_potability');
 N = rmmissing(M);
 
+%% Run the Code for selected samples
 pot = N(:,end) == 1;        %Get idices of samples that are potable
 potdata = N(pot,:);         %Get indices of samples that are not potable
 
@@ -12,9 +13,14 @@ notPotdata = N(notPot,:);   %Get samples that re not potable
 %potable
 dataset = [potdata(1:50,:); notPotdata(1:50,:)];
 
+%Set number different arrangements to be tested
+run = 5;
+
+%Create struct for storing transfer functions
+BestSys(run) = struct('tfunc',0);
+
 %Run the code 5 times with different arrangements
-BestSys(5) = struct('tfunc',0);
-for seed = 1:5
+for seed = 1:run
 
     %% Split Dataset into Training and Validation Sets
     
