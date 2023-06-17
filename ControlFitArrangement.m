@@ -117,8 +117,8 @@ for seed = 1:run
     
     %% Model Validation
     
-    BestSys(i).tfunc = tfest(train(:,1:end-1),train(:,end),bestpole,bestzero);
+    BestSys(seed).tfunc = tfest(train(:,1:end-1),train(:,end),bestpole,bestzero);
     
     figure();
-    compare(val(:,1:end-1),val(:,end),BestSys(i).tfunc)
+    compare(val(:,1:end-1),val(:,end),BestSys(seed).tfunc)
 end
