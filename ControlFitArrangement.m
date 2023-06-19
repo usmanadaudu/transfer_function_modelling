@@ -35,7 +35,7 @@ for seed = 1:run
     writematrix(train,tr_name)
     train(:,1:end-1) = normalize(train(:,1:end-1));
     
-    val = dataset(shuffle(ceil(training_size*length(dataset)):end),:);
+    val = dataset(shuffle(floor(training_size*length(dataset))+1:end),:);
     writematrix(val,val_name)
     val(:,1:end-1) = normalize(val(:,1:end-1));
     
