@@ -24,14 +24,19 @@ for seed = 1:run
 
     %% Split Dataset into Training and Validation Sets
     
+    tr_name = "train" + num2str(seed) + ".csv";
+    val_name = "val" + num2str(seed) + ".csv";
+
     training_size = 0.75;
     rng(seed)
     shuffle = randperm(size(dataset,1));
     
     train = dataset(shuffle(1:floor(training_size*length(dataset))),:);
+    writematrix(train,tr_name)
     train(:,1:end-1) = normalize(train(:,1:end-1));
     
     val = dataset(shuffle(ceil(training_size*length(dataset)):end),:);
+    writematrix(val,val_name)
     val(:,1:end-1) = normalize(val(:,1:end-1));
     
     %% Search for Best Pole and Zeros to Estimate Transfer Function
